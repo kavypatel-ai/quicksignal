@@ -65,7 +65,22 @@
 
       document.getElementById("output").value = text;
     }
+    function copySignal() {
+      let text = document.getElementById("output").value;
+      if (!text) {
+        alert("⚠️ Nothing to copy yet!");
+        return;
+      }
+      navigator.clipboard.writeText(text)
+        .then(() => {
+          alert("✅ Signal copied to clipboard!");
+        })
+        .catch(err => {
+          alert("❌ Copy failed: " + err);
+        });
+    }
   </script>
 </body>
 </html>
+
 
