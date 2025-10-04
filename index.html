@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>BTC Signal Generator</title>
+  <style>
+    body { font-family: Arial, sans-serif; margin: 30px; }
+    input, button { padding: 10px; margin: 5px; }
+    textarea { width: 100%; height: 300px; margin-top: 15px; }
+  </style>
+</head>
+<body>
+  <h2>📊 BTC Signal Generator</h2>
+  
+  <label>Enter First Entry Price:</label>
+  <input type="number" id="firstEntry" placeholder="Enter price" required>
+  <button onclick="generateSignal()">Generate</button>
+  
+  <h3>Generated Signal:</h3>
+  <textarea id="output" readonly></textarea>
+
+  <script>
+    function generateEntries(firstEntry) {
+      let drops = [1.0, 1.2, 1.5, 1.8, 2.0, 2.3, 2.5, 3.0, 5.0, 7.0];
+      let entries = [firstEntry];
+      for (let i = 0; i < drops.length; i++) {
+        let next = entries[entries.length - 1] * (1 - drops[i] / 100);
+        entries.push(Math.round(next));
+      }
+      return entries;
+    }
+
+    function generateSignal() {
+      let firstEntry = parseFloat(document.getElementById("firstEntry").value);
+      if (isNaN(firstEntry)) {
+        alert("Please enter a valid number!");
+        return;
+      }
+
+      let entries = generateEntries(firstEntry);
+
+      let allocFirst10 = [3,6,8,10,11,12,12,12,12,12];
+      let remaining = 100 - allocFirst10.reduce((a, b) => a + b, 0);
+      let allocations = [...allocFirst10, remaining];
+
+      let text = "TWS BTC/USDT SWING TRADE\n";
+      text += "\n";
+      text += "SIGNAL:\n";
+      text += "\n";
+      text += "Pair: BTC/USDT - LONG\n";
+      text += "Leverage: 5x ISOLATED\n\n";
+      text += "ENTRYS:\n";
+      text += "\n";
+
+      for (let i = 0; i < entries.length; i++) {
+        text += (i+1) + ". ENTRY : " + entries[i] + "[" + allocations[i] + "%]\n";
+      }
+
+      let tpPrice = Math.round(entries[0] * 1.02); // 2% TP
+      text += "\nTP (100% CLOSE): " + tpPrice + " [2%]\n";
+      text += "\n";
+      text += "Target will adjust after DCA.\n";
+      text += "\n";
+      text += "IMPORTANT: READ PINNED COMMENT CAREFULLY BEFORE TAKING TRADE";
+
+      document.getElementById("output").value = text;
+    }
+  </script>
+</body>
+</html>
